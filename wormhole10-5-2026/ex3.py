@@ -8,4 +8,4 @@ etudiant["ville"] = "Paris"
 moyenne : float = sum(etudiant["notes"]) / len(etudiant["notes"])
 print(f"La moyenne des notes de l'étudiant est {moyenne}")
 for key in etudiant:
-    print(f"{key}")
+    print(f"{key}: {etudiant[key]}")
