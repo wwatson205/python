@@ -1,0 +1,48 @@
+class Personnage:
+    def __init__(self,name: str):
+        self.name : str = name
+        self.hp: int = 100
+        self.mana : int = 50
+        self.atq: int = 20
+        self.atqmana: int = 30
+        self.defenseatq: int = 10
+        self.defensemana: int = 15
+
+
+
+    def attaquer(self, cible : "Personnage") -> None:
+        cible.hp = cible.hp - self.atq + cible.defenseatq
+        print(f"{self.name} envoie une attaque à {cible.name} ! Il lui enleve {self.atq - cible.defenseatq} points de vie.") 
+
+
+    def fireball(self, cible : "Personnage") -> None:
+        cible.hp = cible.hp - self.atqmana + cible.defensemana
+        self.mana -= 30
+        if self.mana < 0:
+            self.mana = 0
+            print(f"{self.name} n'a plus de mana pour lancer Fireball !")
+        print(f"{self.name} lance Fireball sur {cible.name} ! Il lui enleve {self.atqmana - cible.defensemana} points de vie et perd 30 points de mana.")
+    
+    def afficher(self) -> None:
+        if self.hp <= 0:
+            print(f"{self.name} est mort !")
+        print(f"Nom : {self.name}, HP : {self.hp}, Mana : {self.mana}")
+
+        
+
+Dav = Personnage("David")
+Goliath = Personnage("Goliath")
+Dav.afficher()
+Goliath.afficher()
+Dav.fireball(Goliath)
+Dav.afficher()
+Goliath.afficher()
+Goliath.attaquer(Dav)
+Dav.afficher()
+Goliath.afficher()
+Goliath.fireball(Dav)
+Dav.afficher()
+Goliath.afficher()
+Dav.fireball(Goliath)
+Dav.afficher()
+Goliath.afficher()

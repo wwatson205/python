@@ -1,0 +1,21 @@
+def add(a : int, b : int) -> int:
+    return a + b
+
+
+
+
+def division(a : int, b : int) -> float:
+    if b == 0:
+        print("Erreur : diviseur diff de zero")
+    else:
+       return a / b
+
+
+
+# programme principal
+print(add(9, 3))
+print(division(10, 0))
+
+
+
+

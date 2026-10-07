@@ -9,7 +9,7 @@ for contact in contacts:
     print(f" {contact['nom']} : {contact['numero']}")
 print(f"Le total de contacts enregistrés est : {nb_contacts}")
 
-display : int = int(input("Voulez-vous afficher un contact en particulier ?"))
+display : str = (input("Quel contact souhaitez-vous afficher ? "))
 for contact in contacts:
     if contact['nom'].lower() == display.lower():
         print(f"Le contact {contact['nom']} a pour numéro : {contact['numero']}")
