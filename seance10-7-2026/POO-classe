@@ -38,7 +38,7 @@ class Personnage:
 
 Dav = Personnage("David")
 Goliath = Personnage("Goliath")
-Noa = Personnage("Noa")
+
 Dav.afficher()
 Goliath.afficher()
 

@@ -1,0 +1,20 @@
+[
+  {
+    "nom": "Dupont",
+    "prenom": "Jean",
+    "telephone": "06 12 34 56 78",
+    "adresse": "10 rue de la République, 13001 Marseille"
+  },
+  {
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "telephone": "06 23 45 67 89",
+    "adresse": "25 avenue du Prado, 13006 Marseille"
+  },
+  {
+    "nom": "Bernard",
+    "prenom": "Lucas",
+    "telephone": "07 34 56 78 90",
+    "adresse": "8 rue Paradis, 13006 Marseille"
+  }
+]
