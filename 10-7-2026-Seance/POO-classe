@@ -10,14 +10,14 @@ class Personnage:
 
 
 
-    def attaquer(self, cible : "Personnage") -> None:
+    def attaquer(self, cible : "Personnage") -> None: #méthode qui permet d'attaquer un autre personnage enleve le points de vie en fonction de l'attaque et de la défense du personnage attaqué    
         cible.hp = cible.hp - self.atq + cible.defenseatq
         print(f"{self.name} envoie une attaque à {cible.name} ! Il lui enleve {self.atq - cible.defenseatq} points de vie.") 
 
 
 
 
-    def fireball(self, cible : "Personnage") -> None:
+    def fireball(self, cible : "Personnage") -> None: #méthode qui permet d'attaquer un autre personnage enleve le points de vie en fonction de l'attaque et de la défense du personnage attaqué et enleve 30 points de mana au personnage qui lance le sort
         cible.hp = cible.hp - self.atqmana + cible.defensemana
         self.mana -= 30
         if self.mana < 0:
