@@ -51,6 +51,13 @@ def find_contact(): #fonction qui permet de trouver un contact via son prenom ou
         print("Aucun contact trouvé")
 
 
+    for contact in data:
+        if recherche.lower() == contact["nom"].lower() or recherche.lower() == contact["prenom"].lower():
+            print(f"Voici le contact {contact['nom']} {contact['prenom']} avec comme numero {contact['telephone']}")
+            break
+        else:
+             print("Aucun contact trouvé")
+
 
 
 
