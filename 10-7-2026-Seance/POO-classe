@@ -28,9 +28,9 @@ class Personnage:
 
 
     def afficher(self) -> None:
-        if self.hp <= 0:
+        if self.points_de_vie <= 0:
             print(f"{self.name} est mort !")   
-            self.hp = 0
+            self.points_de_vie = 0
         print(f"Nom : {self.name}, HP : {self.hp}, Mana : {self.mana}")
 
 
