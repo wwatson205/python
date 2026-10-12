@@ -186,43 +186,85 @@ class Partie:
         with open(path, "a", encoding="utf-8") as file:
             json.dump(data,file,ensure_ascii = False, indent = 4)
 
+def charger_partie(path):
+    file = open(path, "r", encoding="utf-8")
+    data = json.load(file)
+
+    partie = Partie()
+
+    for dico in data["personnages"]:
+        if dico["type"] == "Heros":
+            perso = Heros(
+                dico["nom"],
+                dico["points_de_vie"],
+                dico["force"],
+                dico["mana"]
+            )
+
+        elif dico["type"] == "Monstre":
+            perso = Monstre(
+                dico["nom"],
+                dico["points_de_vie"],
+                dico["force"],
+                dico["niveau_de_danger"],
+                dico["butin"]
+            )
+
+        elif dico["type"] == "Personnage":
+            perso = Personnage(
+                dico["nom"],
+                dico["points_de_vie"],
+                dico["force"]
+            )
+
+        else:
+            return f"Il n'existe pas de type de personnage de la sorte {dico['type']}"
+
+        partie.ajouter_personnage(perso)
+
+    partie.historique = data["historique"]
+
+    return partie
 
 
 
 
 
 
-
-
-petit_gobelin = Personnage("Gobelin", 20, 5)
+#Partie A tests
+gobelin = Personnage("Gobelin", 20, 5)
 aldric = Personnage("Aldric", 30, 8)
-print(aldric.attaquer(petit_gobelin))
-print(petit_gobelin.attaquer(aldric))
-print(petit_gobelin)
-print(aldric)
+print(aldric.attaquer(gobelin))
+print(gobelin)
+
+
+
+#Partie B tests
 lancelot = Heros("Lancelot", 40, 10, mana=25)
-william = Heros("William",40,10, mana = 25)
-gobelin = Monstre("Gobelin", 100, 5, niveau_de_danger=2, butin="10 pièces d'or")
+gobelin = Monstre("Gobelin", 20, 5, niveau_de_danger=2, butin="10 pièces d'or")
+print(gobelin.attaquer(lancelot))
+print(lancelot.competence_speciale(gobelin))
+print(lancelot.competence_speciale(gobelin))
+print(lancelot.competence_speciale(gobelin))
 
-print(gobelin.attaquer(lancelot))             # degats = 5 * 2 = 10
-print(lancelot.competence_speciale(gobelin))  # degats = 10 * 2 = 20, mana 25 -> 15
-print(lancelot.competence_speciale(gobelin))  # mana 15 -> 5, encore possible
-print(lancelot.competence_speciale(gobelin))  # mana 5 < 10, message d'echec
 
-lancelot.sauvegarder("dict_perso.json")
-lancelot_recharge = charger_personnage("dict_perso.json")
+#Partie C tests
+lancelot.sauvegarder("lancelot.json")
+lancelot_recharge = charger_personnage("lancelot.json")
 print(lancelot_recharge)
 print(lancelot_recharge.mana)
 
 
+
+#Partie D tests
 partie = Partie()
 partie.ajouter_personnage(lancelot)
 partie.ajouter_personnage(gobelin)
-
 partie.combat(lancelot, gobelin)
 partie.combat(gobelin, lancelot)
-
 for evenement in partie.historique:
     print(evenement)
 
 partie.sauvegarder("partie.json")
+
+
