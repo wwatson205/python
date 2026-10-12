@@ -1,3 +1,5 @@
+import json
+
 class Personnage:
     """Un personnage générique : nom, points de vie, force d'attaque."""
 
@@ -38,7 +40,7 @@ class Personnage:
 
 
     def sauvegarder(self,path):
-        file = open(path, "w", encoding="utd-8")
+        file = open(path, "w", encoding="utf-8")
         json.dump(self.to_dict(),file)
 
 
@@ -76,7 +78,7 @@ class Heros(Personnage):
 
     def to_dict(self):    
         dico : dict = super().to_dict()
-        dico["type"]= "Héros"
+        dico["type"]= "Heros"
         dico["mana"]= self.mana
         return dico
 
@@ -123,11 +125,11 @@ def charger_personnage(chemin):
     dico= json.load(file)
 
     if dico["type"] == "Heros":
-        return Heros(d["nom"], dico["points_de_vie"], dico["force"], dico["mana"])
+        return Heros(dico["nom"], dico["points_de_vie"], dico["force"], dico["mana"])
     if dico["type"] == "Monstre":
         return Monstre(dico["nom"], dico["points_de_vie"], dico["force"],
                        dico["niveau_de_danger"], dico["butin"])
-    return Personnage(d["nom"], d["points_de_vie"], d["force"])
+    return Personnage(dico["nom"], dico["points_de_vie"], dico["force"])
 
 
 
@@ -162,4 +164,8 @@ print(gobelin.attaquer(lancelot))             # degats = 5 * 2 = 10
 print(lancelot.competence_speciale(gobelin))  # degats = 10 * 2 = 20, mana 25 -> 15
 print(lancelot.competence_speciale(gobelin))  # mana 15 -> 5, encore possible
 print(lancelot.competence_speciale(gobelin))  # mana 5 < 10, message d'echec
-    
+lancelot.sauvegarder("dict_perso.json")
+lancelot_recharge = charger_personnage("dict_perso.json")
+print(lancelot_recharge)
+print(lancelot_recharge.mana)
+
