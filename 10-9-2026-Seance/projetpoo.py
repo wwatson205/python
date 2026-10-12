@@ -6,8 +6,10 @@ class Personnage:
         self.points_de_vie = points_de_vie
         self.force = force
 
+
     def est_vivant(self):
         return self.points_de_vie > 0
+
 
     def subir_degats(self, degats):
         # TODO : diminue self.points_de_vie de `degats`, sans jamais descendre sous 0
@@ -21,25 +23,43 @@ class Personnage:
         # TODO : applique self.force en dégâts à `cible` (via subir_degats),
         degats = self.force
         cible.subir_degats(degats)
-
-        
         # puis RETOURNE (return, pas print) un message du type :
         # "Aldric attaque Gobelin et lui infline 8 degats (Gobelin : 12 PV restants)"
         return (f"{self.nom} attaque {cible.nom} et lui inflige {degats}dégats ({cible.nom}: {cible.points_de_vie} PV restants)")
-        
 
-        
+
+    def to_dict(self):
+        return {
+            "type": "Personnage",
+            "nom" : self.nom,
+            "points_de_vie": self.points_de_vie,
+            "force": self.force,
+        }
+
+
+    def sauvegarder(self,path):
+        file = open(path, "w", encoding="utd-8")
+        json.dump(self.to_dict(),file)
+
 
     def __repr__(self):
         return (f"{self.nom} : {self.points_de_vie} PV")
 
+
+
+
+
+
+
+
+
+
 class Heros(Personnage):
+
 
     def __init__(self,nom, points_de_vie, force, mana):
         super().__init__(nom, points_de_vie, force)
         self.mana = mana
-
-
 
 
     def competence_speciale(self,cible : "Personnage"):
@@ -50,11 +70,27 @@ class Heros(Personnage):
             self.mana = 0
             print (f"Plus de points de mana")
         else:
-            self.mana = self.mana
-                   
+            self.mana = self.mana           
         return (f"{self.nom} attaque {cible.nom} et lui inflige {degats *2 } dégats et lui reste {self.mana} de mana({cible.nom}: {cible.points_de_vie} PV restants)")
 
+
+    def to_dict(self):    
+        dico : dict = super().to_dict()
+        dico["type"]= "Héros"
+        dico["mana"]= self.mana
+        return dico
+
+
+
+
+
+
+
+
+
+
 class Monstre(Personnage):
+
 
     def __init__(self,nom, points_de_vie, force, niveau_de_danger,butin):
         super().__init__(nom, points_de_vie, force)
@@ -65,13 +101,53 @@ class Monstre(Personnage):
     def attaquer(self, cible : "Personnage"):
         # TODO : applique self.force en dégâts à `cible` (via subir_degats),
         degats = self.force * self.niveau_de_danger
-        cible.subir_degats(degats)
-
-        
+        cible.subir_degats(degats)    
         # puis RETOURNE (return, pas print) un message du type :
         # "Aldric attaque Gobelin et lui infline 8 degats (Gobelin : 12 PV restants)"
         return (f"{self.nom} attaque {cible.nom} et lui inflige {degats}dégats ({cible.nom}: {cible.points_de_vie} PV restants)")
-    
+
+
+    def to_dict(self):
+        dico : dict = super().to_dict()
+        dico["type"] = "Monstre"
+        dico["niveau_de_danger"] = self.niveau_de_danger
+        dico["butin"]= self.butin
+        return dico
+
+
+
+
+
+def charger_personnage(chemin):
+    file =  open(chemin, "r", encoding="utf-8")
+    dico= json.load(file)
+
+    if dico["type"] == "Heros":
+        return Heros(d["nom"], dico["points_de_vie"], dico["force"], dico["mana"])
+    if dico["type"] == "Monstre":
+        return Monstre(dico["nom"], dico["points_de_vie"], dico["force"],
+                       dico["niveau_de_danger"], dico["butin"])
+    return Personnage(d["nom"], d["points_de_vie"], d["force"])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 petit_gobelin = Personnage("Gobelin", 20, 5)
 aldric = Personnage("Aldric", 30, 8)
