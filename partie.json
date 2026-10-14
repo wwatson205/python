@@ -1,0 +1,24 @@
+{
+    "historique": [
+        "Gobelin est deja vaincu",
+        "Gobelin est mort",
+        "Gobelin attaque Lancelot et lui inflige 10dégats (Lancelot: 20 PV restants)"
+    ],
+    "personnages": [
+        {
+            "type": "Heros",
+            "nom": "Lancelot",
+            "points_de_vie": 20,
+            "force": 10,
+            "mana": 0
+        },
+        {
+            "type": "Monstre",
+            "nom": "Gobelin",
+            "points_de_vie": 0,
+            "force": 5,
+            "niveau_de_danger": 2,
+            "butin": "10 pièces d'or"
+        }
+    ]
+}

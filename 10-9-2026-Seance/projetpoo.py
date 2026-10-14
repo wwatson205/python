@@ -1,5 +1,4 @@
 import json
-
 class Personnage:
     """Un personnage générique : nom, points de vie, force d'attaque."""
 
@@ -23,6 +22,8 @@ class Personnage:
 
     def attaquer(self, cible : "Personnage"):
         # TODO : applique self.force en dégâts à `cible` (via subir_degats),
+        if not cible.est_vivant():
+            return (f"{cible.nom} est deja vaincu")
         degats = self.force
         cible.subir_degats(degats)
         # puis RETOURNE (return, pas print) un message du type :
@@ -40,8 +41,8 @@ class Personnage:
 
 
     def sauvegarder(self,path):
-        file = open(path, "w", encoding="utf-8")
-        json.dump(self.to_dict(),file)
+        file = open(path, "a", encoding="utf-8")
+        json.dump(self.to_dict(),file, ensure_ascii= False, indent=4)
 
 
     def __repr__(self):
@@ -68,12 +69,13 @@ class Heros(Personnage):
         degats = self.force
         cible.subir_degats(degats * 2)
         self.mana -= 10
-        if self.mana < 0:
-            self.mana = 0
+        if self.mana < 10:
             print (f"Plus de points de mana")
+            self.mana = 0
+            
         else:
             self.mana = self.mana           
-        return (f"{self.nom} attaque {cible.nom} et lui inflige {degats *2 } dégats et lui reste {self.mana} de mana({cible.nom}: {cible.points_de_vie} PV restants)")
+        return (f"{self.nom} attaque {cible.nom} et lui inflige {degats *2 } degats et lui reste {self.mana} de mana({cible.nom}: {cible.points_de_vie} PV restants)")
 
 
     def to_dict(self):    
@@ -120,52 +122,147 @@ class Monstre(Personnage):
 
 
 
-def charger_personnage(chemin):
-    file =  open(chemin, "r", encoding="utf-8")
+def charger_personnage(path):
+    file =  open(path, "r", encoding="utf-8")
     dico= json.load(file)
 
     if dico["type"] == "Heros":
-        return Heros(dico["nom"], dico["points_de_vie"], dico["force"], dico["mana"])
-    if dico["type"] == "Monstre":
-        return Monstre(dico["nom"], dico["points_de_vie"], dico["force"],
-                       dico["niveau_de_danger"], dico["butin"])
-    return Personnage(dico["nom"], dico["points_de_vie"], dico["force"])
+        return Heros(
+            dico["nom"],
+            dico["points_de_vie"],
+            dico["force"],
+            dico["mana"]
+        )
+
+    elif dico["type"] == "Monstre":
+        return Monstre(
+            dico["nom"],
+            dico["points_de_vie"],
+            dico["force"],
+            dico["niveau_de_danger"],
+            dico["butin"]
+        )
+
+    elif dico["type"] == "Personnage":
+        return Personnage(
+            dico["nom"],
+            dico["points_de_vie"],
+            dico["force"]
+        )
+
+    else:
+        return(f"Il n'existe pas de type de personnage de la sorte {dico['type']}")
+
+
+
+
+class Partie:
+    def __init__(self):
+        self.personnages = []
+        self.historique = []   # liste de messages, dans l'ordre chronologique
+
+
+
+    def ajouter_personnage(self,personnage):
+        self.personnages.append(personnage)
+
+
+    def combat(self,attaquant, defenseur):
+        atq = attaquant.attaquer(defenseur)
+        self.historique.append(atq)
+        if not defenseur.est_vivant():
+            msg_dft = (f"{defenseur.nom} est mort")
+            self.historique.append(msg_dft)
+
+
+    def sauvegarder(self,path):
+        data = {
+            "historique" : self.historique,
+            "personnages": []
+        }
+
+        for perso in self.personnages:
+            data["personnages"].append(perso.to_dict())
+        with open(path, "a", encoding="utf-8") as file:
+            json.dump(data,file,ensure_ascii = False, indent = 4)
+
+def charger_partie(path):
+    file = open(path, "r", encoding="utf-8")
+    data = json.load(file)
+
+    partie = Partie()
+
+    for dico in data["personnages"]:
+        if dico["type"] == "Heros":
+            perso = Heros(
+                dico["nom"],
+                dico["points_de_vie"],
+                dico["force"],
+                dico["mana"]
+            )
+
+        elif dico["type"] == "Monstre":
+            perso = Monstre(
+                dico["nom"],
+                dico["points_de_vie"],
+                dico["force"],
+                dico["niveau_de_danger"],
+                dico["butin"]
+            )
+
+        elif dico["type"] == "Personnage":
+            perso = Personnage(
+                dico["nom"],
+                dico["points_de_vie"],
+                dico["force"]
+            )
+
+        else:
+            return f"Il n'existe pas de type de personnage de la sorte {dico['type']}"
+
+        partie.ajouter_personnage(perso)
+
+    partie.historique = data["historique"]
+
+    return partie
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-petit_gobelin = Personnage("Gobelin", 20, 5)
+#Partie A tests
+gobelin = Personnage("Gobelin", 20, 5)
 aldric = Personnage("Aldric", 30, 8)
-print(aldric.attaquer(petit_gobelin))
-print(petit_gobelin.attaquer(aldric))
-print(petit_gobelin)
-print(aldric)
-lancelot = Heros("Lancelot", 40, 10, mana=25)
-gobelin = Monstre("Gobelin", 100, 5, niveau_de_danger=2, butin="10 pièces d'or")
+print(aldric.attaquer(gobelin))
+print(gobelin)
 
-print(gobelin.attaquer(lancelot))             # degats = 5 * 2 = 10
-print(lancelot.competence_speciale(gobelin))  # degats = 10 * 2 = 20, mana 25 -> 15
-print(lancelot.competence_speciale(gobelin))  # mana 15 -> 5, encore possible
-print(lancelot.competence_speciale(gobelin))  # mana 5 < 10, message d'echec
-lancelot.sauvegarder("dict_perso.json")
-lancelot_recharge = charger_personnage("dict_perso.json")
+
+
+#Partie B tests
+lancelot = Heros("Lancelot", 40, 10, mana=25)
+gobelin = Monstre("Gobelin", 20, 5, niveau_de_danger=2, butin="10 pièces d'or")
+print(gobelin.attaquer(lancelot))
+print(lancelot.competence_speciale(gobelin))
+print(lancelot.competence_speciale(gobelin))
+print(lancelot.competence_speciale(gobelin))
+
+
+#Partie C tests
+lancelot.sauvegarder("lancelot.json")
+lancelot_recharge = charger_personnage("lancelot.json")
 print(lancelot_recharge)
 print(lancelot_recharge.mana)
 
+
+
+#Partie D tests
+partie = Partie()
+partie.ajouter_personnage(lancelot)
+partie.ajouter_personnage(gobelin)
+partie.combat(lancelot, gobelin)
+partie.combat(gobelin, lancelot)
+for evenement in partie.historique:
+    print(evenement)
+
+partie.sauvegarder("partie.json")
